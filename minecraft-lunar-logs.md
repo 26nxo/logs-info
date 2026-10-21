@@ -20,7 +20,6 @@ Convenciones:
 | Crash de la JVM | `%APPDATA%\.minecraft\hs_err_pid<PID>.log` | `%USERPROFILE%\.lunarclient\profiles\<perfil>\hs_err_pid<PID>.log` o `%APPDATA%\.minecraft\hs_err_pid<PID>.log` |
 | Log del launcher | `%APPDATA%\.minecraft\launcher_log.txt` | `%USERPROFILE%\.lunarclient\logs\launcher\main.log` |
 | Servidor | `<carpeta-del-servidor>\logs\latest.log` | No aplica |
-| Bedrock | `%APPDATA%\Minecraft Bedrock\logs\ContentLog.txt` | No aplica |
 
 Equivalentes en macOS y Linux:
 
@@ -275,30 +274,7 @@ En un `hs_err` mira:
 - `Command Line`: qué se estaba ejecutando y con qué argumentos.
 - `Host`, `Time`, memoria y versión de Java.
 
-## 3. Minecraft Bedrock Edition
-
-Bedrock no usa el sistema de `crash-reports` de Java. Su log principal es el **content log**, orientado a errores de add-ons, resource packs y behavior packs.
-
-Dónde está:
-
-| Plataforma | Ruta |
-|---|---|
-| Windows (versiones recientes) | `%APPDATA%\Minecraft Bedrock\logs\ContentLog.txt` |
-| Windows (ruta antigua) | `%APPDATA%\logs\ContentLog.txt` |
-| Android | `/storage/emulated/0/Android/data/com.mojang.minecraftpe/files/games/com.mojang/logs` |
-| iOS | `<almacenamiento>/Minecraft/game/com.mojang/logs` |
-
-Detalles:
-
-- Hay que activarlo en `Settings > Creator > Enable Content Log GUI` y/o `Enable Content Log File`.
-- Los errores y warnings salen en la GUI y en el archivo; la información `info`/`verbose` solo sale en el archivo.
-- Los errores no se limpian entre cargas de mundo: pueden ser viejos.
-- Sirve para detectar texturas inexistentes, JSON inválido, componentes mal escritos y rutas incorrectas.
-- Para cierres de Bedrock usa el diálogo de error, el Visor de eventos y los crash dumps de Windows; no habrá un stack trace de Java.
-
-La carpeta de datos de Bedrock (`%LOCALAPPDATA%\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang`) contiene mundos y packs, no los logs de error.
-
-## 4. Servidores de Minecraft
+## 3. Servidores de Minecraft
 
 En la carpeta del servidor:
 
@@ -329,9 +305,9 @@ Cosas típicas de servidor:
 
 Copia `latest.log` antes de reiniciar el servidor, porque se sobrescribe.
 
-## 5. Lunar Client
+## 4. Lunar Client
 
-### 5.1 Estructura de directorios
+### 4.1 Estructura de directorios
 
 Windows:
 
@@ -389,7 +365,7 @@ macOS/Linux:
 
 `%APPDATA%\lunarclient` (Windows) es la carpeta de datos de Electron: `Cache`, `Code Cache`, `Crashpad`, `sentry`, `Local Storage`, `Preferences`, etc. No es donde están los logs del juego. `Crashpad` y `sentry` pueden contener información de crashes del launcher.
 
-### 5.2 Logs del launcher
+### 4.2 Logs del launcher
 
 | Archivo | Contenido |
 |---|---|
@@ -419,7 +395,7 @@ Estructura:
 
 Niveles: `debug`, `info`, `warn`, `error`. Son minúsculas y no son los mismos que los niveles de Minecraft.
 
-### 5.3 Logs del juego
+### 4.3 Logs del juego
 
 | Archivo | Contenido |
 |---|---|
@@ -458,7 +434,7 @@ Prefijos propios de Lunar:
 | `lunarclient:v...` | Client brand que aparece en el crash report. |
 | `LUNARCLIENT_STATUS_INIT` | Marca de inicialización de Lunar. |
 
-### 5.4 Crash reports y crashes de JVM
+### 4.4 Crash reports y crashes de JVM
 
 Los crash reports de Lunar usan el mismo formato que Minecraft:
 
@@ -507,7 +483,7 @@ Si no hay crash report, busca `hs_err_pid<PID>.log`. Cabecera:
 
 El `hs_err` de Lunar puede estar en `profiles\<perfil>` o en `%APPDATA%\.minecraft`, según el layout del perfil. El `Command Line` del `hs_err` suele incluir `-Dichor.logsFile=...\profiles\<perfil>\logs\ichor-boot.log` y `--gameDir`, lo que ayuda a saber qué perfil estaba activo.
 
-### 5.5 Cómo abrir y compartir logs
+### 4.5 Cómo abrir y compartir logs
 
 Desde el launcher:
 
@@ -527,7 +503,7 @@ Para subir logs a soporte:
 
 `Upload Logs` sube los logs al servicio de Lunar; no sustituye el crash report local. Úsalo solo cuando soporte lo solicite.
 
-### 5.6 Flujo de diagnóstico
+### 4.6 Flujo de diagnóstico
 
 | Síntoma | Primer archivo | Después |
 |---|---|---|
@@ -549,7 +525,7 @@ Códigos en el launcher:
 - `[GameIPC] ... Code: 1006`: cierre anómalo del WebSocket; suele coincidir con un crash o cierre brusco del juego.
 - Los códigos `1000`/`1006` de `gameipc.log` **no** son el código de salida de la JVM.
 
-## 6. Identificación rápida por firma
+## 5. Identificación rápida por firma
 
 | Archivo / tipo | Firma que lo delata | Qué es |
 |---|---|---|
@@ -561,7 +537,6 @@ Códigos en el launcher:
 | Launcher Lunar | `[YYYY-MM-DD HH:mm:ss.SSS] [info] [Módulo]` | `main.log` de Lunar |
 | Bootstrap Lunar | `[HH:mm:ss] [Genesis/main/INFO]` | `ichor-boot.log` |
 | Crash report Lunar | `Client brand changed to 'lunarclient:v...'` | Crash report generado por Lunar |
-| Bedrock | `ContentLog.txt` | Content log de add-ons/resource packs |
 | Servidor | `[Server thread/INFO]` | `logs/latest.log` del servidor |
 
 Pistas de sesión:
@@ -572,7 +547,7 @@ Pistas de sesión:
 - Los `.log.gz` conservan el orden por fecha en el nombre.
 - El crash report sí lleva `Time:` y `Description:`.
 
-## 7. Privacidad: qué redactar antes de compartir
+## 6. Privacidad: qué redactar antes de compartir
 
 Los logs pueden contener datos personales. Revisa y redacta:
 
@@ -585,7 +560,7 @@ Los logs pueden contener datos personales. Revisa y redacta:
 
 Recomendación: para pedir ayuda, comparte `latest.log` + el crash report más reciente + `main.log`. Si el problema es un crash nativo, comparte `hs_err_pid` **redactado**. No compartas `auth.log` salvo que sea imprescindible y siempre con los tokens eliminados.
 
-## 8. Comandos útiles
+## 7. Comandos útiles
 
 Windows PowerShell:
 
@@ -622,7 +597,7 @@ gzip -dc ~/.minecraft/logs/2026-10-21-1.log.gz | less
 tail -n 100 ~/.lunarclient/profiles/1.8/logs/latest.log
 ```
 
-## 9. Checklist rápido
+## 8. Checklist rápido
 
 1. Cierra el juego antes de copiar logs.
 2. Copia `latest.log` antes de volver a abrirlo.
@@ -635,7 +610,7 @@ tail -n 100 ~/.lunarclient/profiles/1.8/logs/latest.log
 9. Redacta tokens, usuario, UUID, IPs y chat antes de compartir.
 10. Si el problema es del launcher, revisa `main.log`/`launcher_log.txt` antes que el log del juego.
 
-## 10. Fuentes
+## 9. Fuentes
 
 - Minecraft Wiki — Crash: <https://minecraft.wiki/w/Crash>
 - Minecraft Wiki — Tutorial: Obtaining a crash report: <https://minecraft.wiki/w/Tutorial:Obtaining_a_crash_report>
@@ -646,8 +621,6 @@ tail -n 100 ~/.lunarclient/profiles/1.8/logs/latest.log
 - MinecraftHopper — Exit statuses: <https://minecrafthopper.net/help/exit-code/>
 - Lunar Client — How to get Lunar Client Support: <https://www.lunarclient.com/news/how-to-get-lunar-client-support>
 - Lunar Client Support — Uploading Launcher Logs: <https://support.lunarclient.com/solutions/uploading-launcher-logs>
-- Microsoft Learn — Content Error Log: <https://learn.microsoft.com/en-us/minecraft/creator/documents/contenterrorlog>
-- Bedrock Wiki — Troubleshooting: <https://wiki.bedrock.dev/guide/troubleshooting>
 - Lunar Client Support — Pixel Format Launch Fail: <https://support.lunarclient.com/solutions/pixel-format-launch-fail>
 - Lunar Client Support — Failed to Extract Natives: <https://support.lunarclient.com/solutions/failed-to-extract-natives>
 - Lunar Client Support — Failed to Launch in Fullscreen: <https://support.lunarclient.com/solutions/failed-to-launch-in-fullscreen>
